@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace EncounterGenerator.Data
 {
-    public class GoogleSheetsService
+    public class GoogleSheetsService : IGoogleSheetsService
     {
         private readonly string _apiKey;
         private readonly string _spreadsheetId;
