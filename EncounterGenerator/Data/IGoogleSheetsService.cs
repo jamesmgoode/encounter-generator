@@ -4,6 +4,6 @@ namespace EncounterGenerator.Data
 {
     public interface IGoogleSheetsService
     {
-        Task GetSomeDataAsync();
+        Task GetSomeDataAsync(string range);
     }
 }
