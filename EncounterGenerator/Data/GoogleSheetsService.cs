@@ -1,7 +1,9 @@
 ﻿using Google.Apis.Services;
 using Google.Apis.Sheets.v4;
+using Google.Apis.Sheets.v4.Data;
 using Microsoft.Extensions.Configuration;
 using System.Threading.Tasks;
+using static Google.Apis.Sheets.v4.SpreadsheetsResource.ValuesResource;
 
 namespace EncounterGenerator.Data
 {
@@ -10,26 +12,23 @@ namespace EncounterGenerator.Data
         private readonly string _apiKey;
         private readonly string _spreadsheetId;
 
+        private readonly BaseClientService.Initializer _initializer;
+
         public GoogleSheetsService(IConfiguration configuration)
         {
             _apiKey = configuration.GetValue<string>("EncounterGeneratorData:ApiKey");
             _spreadsheetId = configuration.GetValue<string>("EncounterGeneratorData:SpreadsheetId");
+
+            _initializer = new BaseClientService.Initializer { ApiKey = _apiKey };
         }
 
-        public async Task GetSomeDataAsync()
+        public async Task GetSomeDataAsync(string range)
         {
-            var service = new SheetsService(new BaseClientService.Initializer
-            {
-                ApiKey = _apiKey
-            });
+            using var sheetsService = new SheetsService(_initializer);
 
-            // Define request parameters.
-            var spreadsheetId = _spreadsheetId;
-            var range = "SheetName!A2:D";
-            SpreadsheetsResource.ValuesResource.GetRequest request =
-                    service.Spreadsheets.Values.Get(spreadsheetId, range);
+            GetRequest sheetsRequest = sheetsService.Spreadsheets.Values.Get(_spreadsheetId, range);
 
-            var response = await request.ExecuteAsync();
+            ValueRange response = await sheetsRequest.ExecuteAsync();
             var values = response.Values;
         }
     }
